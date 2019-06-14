@@ -6,7 +6,7 @@ resources:
       path: ranjithrs/carbot
 
 pipelines:
-  - name: Car Pipeline
+  - name: car_pipeline
     steps:
       - name: build
         type: Bash
