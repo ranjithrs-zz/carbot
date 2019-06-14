@@ -1,0 +1,48 @@
+resources:
+  - name: src
+    type: GitRepo
+    configuration:
+      gitProvider: ranjithr_github
+      path: ranjithrs/carbot
+
+pipelines:
+  - name: Car Pipeline
+    steps:
+      - name: build
+        type: Bash
+        configuration:
+          inputResources:
+            - name: src
+        execution:
+          onExecute:
+            - cd $res_src_resourcePath
+            - shippable_retry npm install
+            - mkdir -p shippable/testresults && mkdir -p shippable/codecoverage
+            - $res_src_resourcePath/node_modules/.bin/mocha --recursive "tests/**/*.spec.js" -R mocha-junit-reporter --reporter-options mochaFile=shippable/testresults/testresults.xml
+            - $res_src_resourcePath/node_modules/.bin/istanbul --include-all-sources cover -root "routes" node_modules/mocha/bin/_mocha -- -R spec-xunit-file --recursive "tests/**/*.spec.js"
+            - $res_src_resourcePath/node_modules/.bin/istanbul report cobertura --dir shippable/codecoverage
+            - save_tests $res_src_resourcePath/shippable/testresults/testresults.xml
+      - name: train_model
+        type: Bash
+        configuration:
+          inputSteps:
+            - name: build
+        execution:
+          onExecute:
+            - echo "Unit Test completed"
+      - name: test_model
+        type: Bash
+        configuration:
+          inputSteps:
+            - name: train_model
+        execution:
+          onExecute:
+            - echo "Xray scan completed"
+      - name: publish_artifacts
+        type: Bash
+        configuration:
+          inputSteps:
+            - name: test_model
+        execution:
+          onExecute:
+            - echo "Publish to RT completed"
