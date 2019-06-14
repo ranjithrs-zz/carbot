@@ -25,8 +25,8 @@ pipelines:
             - name: build
         execution:
           onExecute:
-            - py.test --verbose --junit-xml test-reports/results.xml test_calc.py
-            - save_tests $res_src_resourcePath/test-reports/results.xml
+            - sleep 5
+            - echo "Training model completed"
       - name: test_model
         type: Bash
         configuration:
@@ -34,8 +34,9 @@ pipelines:
             - name: train_model
         execution:
           onExecute:
-            - sleep 30
-            - echo "Training model completed"
+            - pip install pytest
+            - py.test --verbose --junit-xml test-reports/results.xml test_calc.py
+            - save_tests $res_src_resourcePath/test-reports/results.xml          
       - name: publish_artifacts
         type: Bash
         configuration:
