@@ -11,7 +11,7 @@ pipelines:
       - name: build
         type: Bash
         configuration:
-          nodePool: ranjithr_pool        
+          affinityGroup: myGroup        
           inputResources:
             - name: src
               trigger: false
@@ -22,6 +22,7 @@ pipelines:
       - name: train_model
         type: Bash
         configuration:
+          affinityGroup: myGroup
           inputSteps:
             - name: build
         execution:
@@ -31,13 +32,13 @@ pipelines:
       - name: test_model
         type: Bash
         configuration:
-          nodePool: ranjithr_pool
+          affinityGroup: myGroup
           inputSteps:
             - name: train_model
-        execution:
           inputResources:
             - name: src
-              trigger: false        
+              trigger: false               
+        execution:
           onExecute:
             - pip install pytest
             - cd $res_src_resourcePath            
