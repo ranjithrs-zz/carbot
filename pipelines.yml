@@ -13,9 +13,10 @@ pipelines:
         configuration:
           inputResources:
             - name: src
+              trigger: false
         execution:
           onExecute:
-            - echo "build completed"
+            - python -m py_compile application.py
       - name: train_model
         type: Bash
         configuration:
