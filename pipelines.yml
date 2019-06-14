@@ -11,6 +11,7 @@ pipelines:
       - name: build
         type: Bash
         configuration:
+          nodePool: ranjithr_pool        
           inputResources:
             - name: src
               trigger: false
@@ -30,11 +31,16 @@ pipelines:
       - name: test_model
         type: Bash
         configuration:
+          nodePool: ranjithr_pool
           inputSteps:
             - name: train_model
         execution:
+          inputResources:
+            - name: src
+              trigger: false        
           onExecute:
             - pip install pytest
+            - cd $res_src_resourcePath            
             - py.test --verbose --junit-xml test-reports/results.xml test_calc.py
             - save_tests $res_src_resourcePath/test-reports/results.xml          
       - name: publish_artifacts
