@@ -16,7 +16,8 @@ pipelines:
               trigger: false
         execution:
           onExecute:
-            - python -m py_compile application.py
+            - cd $res_src_resourcePath
+            - python -m py_compile calc.py
       - name: train_model
         type: Bash
         configuration:
@@ -24,7 +25,8 @@ pipelines:
             - name: build
         execution:
           onExecute:
-            - echo "Unit Test completed"
+            - py.test --verbose --junit-xml test-reports/results.xml test_calc.py
+            - save_tests $res_src_resourcePath/test-reports/results.xml
       - name: test_model
         type: Bash
         configuration:
@@ -32,7 +34,8 @@ pipelines:
             - name: train_model
         execution:
           onExecute:
-            - echo "Xray scan completed"
+            - sleep 30
+            - echo "Training model completed"
       - name: publish_artifacts
         type: Bash
         configuration:
