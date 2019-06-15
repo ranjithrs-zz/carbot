@@ -55,7 +55,7 @@ pipelines:
         type: Bash
         configuration:
           environmentVariables:
-            imageName: '34.66.110.173:8081/docker-local/calcificator'
+            imageName: 'calcificator'
             dockerImageTag: '${run_number}'        
           inputResources:
             - name: src
@@ -64,10 +64,12 @@ pipelines:
             - name: test_model
           outputResources:
             - name: calcImage
+          integrations:
+            - art
         execution:
           onExecute:
             - pushd $res_src_resourcePath
             - retry_command jfrog rt config --url $int_art_url --user $int_art_user --apikey $int_art_apikey --interactive=false            
             - docker build -t $imageName:$imageTag
-            - write_output myDockerImg "imageTag="$imageTag
-            - jfrog rt docker-push calcificator:$imageTag docker-local --build-name=$pipeline_name --build-number=$run_number
+            - write_output calcImage "imageTag="$imageTag
+            - jfrog rt docker-push $imageName:$imageTag docker-local --build-name=$pipeline_name --build-number=$run_number
