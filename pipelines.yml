@@ -65,7 +65,7 @@ pipelines:
           outputResources:
             - name: calcImage
           integrations:
-            - art
+            - name: art
         execution:
           onExecute:
             - pushd $res_src_resourcePath
