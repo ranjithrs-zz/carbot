@@ -66,5 +66,4 @@ pipelines:
             - pushd $res_src_resourcePath
             - docker build -t calcificator:$imageTag
             - write_output myDockerImg "imageTag="$imageTag
-            - jfrog rt docker-push calcificator:$imageTag docker-local
-          --build-name=$pipeline_name --build-number=$run_number
+            - jfrog rt docker-push calcificator:$imageTag docker-local --build-name=$pipeline_name --build-number=$run_number
