@@ -4,7 +4,13 @@ resources:
     configuration:
       gitProvider: ranjithr_github
       path: ranjithrs/carbot
-
+  - name: calcImage
+    type: Image
+    configuration:
+      registry: artDocker
+      imageName: demo/mycalcificator
+      imageTag: latest
+      autoPull: false
 pipelines:
   - name: car_pipeline
     steps:
@@ -19,6 +25,7 @@ pipelines:
           onExecute:
             - cd $res_src_resourcePath
             - python -m py_compile calc.py
+            - add_run_variable imageTag="production"
       - name: train_model
         type: Bash
         configuration:
@@ -47,8 +54,15 @@ pipelines:
       - name: publish_artifacts
         type: Bash
         configuration:
+          inputResources:
+            - name: src
+              trigger: false          
           inputSteps:
             - name: test_model
+          outputResources:
+            - name: calcImage
         execution:
           onExecute:
-            - echo "Publish to RT completed"
+            - pushd $res_src_resourcePath
+            - docker build -t calcificator:$imageTag
+            - write_output myDockerImg "imageTag="$imageTag
