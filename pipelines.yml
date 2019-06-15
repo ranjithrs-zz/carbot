@@ -56,7 +56,7 @@ pipelines:
         configuration:
           environmentVariables:
             imageName: 34.66.110.173:8081/docker-local/calcificator
-            dockerImageTag: '${run_number}'        
+            imageTag: '${run_number}'        
           inputResources:
             - name: src
               trigger: false          
