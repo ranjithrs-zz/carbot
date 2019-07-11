@@ -1,1 +1,3 @@
 # carbot
+
+Simple pipeline
